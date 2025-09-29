@@ -1,13 +1,37 @@
 <ul>
   @for (place of places(); track place.id) {
-    <li class="place-item">
-      <button (click)="onSelectPlace(place)">
+  <li class="place-item">
+    <button (click)="onSelectPlace(place)">
+      <div class="image-wrapper">
         <img
           [src]="'http://localhost:3000/' + place.image.src"
           [alt]="place.image.alt"
         />
-        <h3>{{ place.title }}</h3>
-      </button>
-    </li>
+
+        <!-- Favorite button (separate, not nested inside another <button>) -->
+        <button
+          type="button"
+          class="favorite-btn"
+          (click)="toggleFavorite(place); $event.stopPropagation()"
+          [ngClass]="{ favorite: place.isFavorite }"
+          [attr.aria-pressed]="place.isFavorite"
+          title="Toggle favorite"
+        >
+          <svg
+            class="heart-icon"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6.01 3.99 4 6.5 4c1.54 0 3.04.81 3.94 2.09L12 8.5l1.56-2.41C14.46 4.81 15.96 4 17.5 4 20.01 4 22 6.01 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            />
+          </svg>
+        </button>
+      </div>
+      <h3>{{ place.title }}</h3>
+    </button>
+  </li>
   }
 </ul>
