@@ -5,6 +5,7 @@ import { Place } from '../place.model';
 import { PlacesComponent } from '../places.component';
 import { PlacesContainerComponent } from '../places-container/places-container.component';
 import { LoadingScreenComponent } from '../../shared/loading-screen/loading-screen.component';
+import { PlacesService } from '../places.service';
 
 @Component({
   selector: 'app-available-places',
@@ -17,19 +18,36 @@ export class AvailablePlacesComponent implements OnInit {
   places = signal<Place[] | undefined>(undefined);
   isLoading = signal(false);
   private httpClient = inject(HttpClient);
+  private placeService = inject(PlacesService);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.isLoading.set(true);
+    const subscription = this.placeService.loadAvailablePlaces().subscribe({
+      next: (resData) => {
+        this.places.set(resData.places);
+      },
+      error: () => {
+        //todo error message
+      },
+      complete: () => {
+        this.isLoading.set(false);
+      },
+    });
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe;
+    });
+  }
+
+  onSelectPlace(selectedPlace: Place) {
     const subscription = this.httpClient
-      .get<{ places: Place[] }>(' http://localhost:3000/places')
+      .put('http://localhost:3000/user-places', { selectedPlace })
       .subscribe({
-        next: (resData) => {
-          this.places.set(resData.places);
-          this.isLoading.set(false);
+        next(value) {
+          console.log(value);
         },
       });
-
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe;
     });

@@ -14,10 +14,9 @@ export class PlacesComponent {
   places = input.required<Place[]>();
   selectPlace = output<Place>();
 
-  onSelectPlace(place: Place) {
-    this.selectPlace.emit(place);
-  }
-  toggleFavorite(place: any) {
+  toggleFavorite(place: Place) {
+    console.log(place);
     place.isFavorite = !place.isFavorite;
+    this.selectPlace.emit(place);
   }
 }

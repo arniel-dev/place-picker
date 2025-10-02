@@ -29,34 +29,24 @@ app.get("/places", async (req, res) => {
 });
 
 app.get("/user-places", async (req, res) => {
-  const fileContent = await fs.readFile("./data/user-places.json");
-
-  const places = JSON.parse(fileContent);
-
+  const fileContent = await fs.readFile("./data/places.json");
+  const parseData = JSON.parse(fileContent);
+  const places = [...parseData].filter((place) => place.isFavorite === true);
+  console.log(places);
   res.status(200).json({ places });
 });
 
 app.put("/user-places", async (req, res) => {
-  const placeId = req.body.placeId;
+  const place = req.body.selectedPlace;
 
   const fileContent = await fs.readFile("./data/places.json");
   const placesData = JSON.parse(fileContent);
 
-  const place = placesData.find((place) => place.id === placeId);
-
-  const userPlacesFileContent = await fs.readFile("./data/user-places.json");
-  const userPlacesData = JSON.parse(userPlacesFileContent);
-
-  let updatedUserPlaces = userPlacesData;
-
-  if (!userPlacesData.some((p) => p.id === place.id)) {
-    updatedUserPlaces = [...userPlacesData, place];
-  }
-
-  await fs.writeFile(
-    "./data/user-places.json",
-    JSON.stringify(updatedUserPlaces)
+  let updatedUserPlaces = placesData.map((p) =>
+    p.id === place.id ? { ...p, isFavorite: place.isFavorite } : p
   );
+
+  await fs.writeFile("./data/places.json", JSON.stringify(updatedUserPlaces));
 
   res.status(200).json({ userPlaces: updatedUserPlaces });
 });
