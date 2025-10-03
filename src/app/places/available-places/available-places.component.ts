@@ -17,6 +17,7 @@ import { PlacesService } from '../places.service';
 export class AvailablePlacesComponent implements OnInit {
   places = signal<Place[] | undefined>(undefined);
   isLoading = signal(false);
+  error = signal('');
   private httpClient = inject(HttpClient);
   private placeService = inject(PlacesService);
   private destroyRef = inject(DestroyRef);
@@ -27,8 +28,9 @@ export class AvailablePlacesComponent implements OnInit {
       next: (resData) => {
         this.places.set(resData.places);
       },
-      error: () => {
-        //todo error message
+      error: (errMsg: string) => {
+        this.error.set(errMsg);
+        this.isLoading.set(false);
       },
       complete: () => {
         this.isLoading.set(false);

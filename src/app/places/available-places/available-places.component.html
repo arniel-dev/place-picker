@@ -1,6 +1,8 @@
 <app-places-container title="Available Places">
   @if (isLoading()) {
   <app-loading-screen message="Fetching places data..." />
+  } @if (error() && !isLoading()) {
+  <p class="fallback-text">{{ error() }}</p>
   } @if (places()) {
   <app-places [places]="places()!" (selectPlace)="onSelectPlace($event)" />
   } @else if (places()?.length === 0) {

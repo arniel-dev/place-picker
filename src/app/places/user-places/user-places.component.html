@@ -1,6 +1,8 @@
 <app-places-container title="Your Favorite Places">
   @if (isLoading()) {
   <app-loading-screen message="Fetching Favorite Places ..." />
+  } @if (error() && !isLoading()) {
+  <p class="fallback-text">{{ error() }}</p>
   } @if (places()) {
   <app-places [places]="places()!" />
   } @else if (places()?.length === 0) {
