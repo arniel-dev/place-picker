@@ -15,12 +15,12 @@ import { PlacesService } from '../places.service';
   imports: [PlacesComponent, PlacesContainerComponent, LoadingScreenComponent],
 })
 export class AvailablePlacesComponent implements OnInit {
+  private placeService = inject(PlacesService);
+  private destroyRef = inject(DestroyRef);
+
   places = signal<Place[] | undefined>(undefined);
   isLoading = signal(false);
   error = signal('');
-  private httpClient = inject(HttpClient);
-  private placeService = inject(PlacesService);
-  private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.isLoading.set(true);
@@ -43,13 +43,7 @@ export class AvailablePlacesComponent implements OnInit {
   }
 
   onSelectPlace(selectedPlace: Place) {
-    const subscription = this.httpClient
-      .put('http://localhost:3000/user-places', { selectedPlace })
-      .subscribe({
-        next(value) {
-          console.log(value);
-        },
-      });
+    const subscription = this.placeService.addPlaceToUserPlaces(selectedPlace);
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe;
     });

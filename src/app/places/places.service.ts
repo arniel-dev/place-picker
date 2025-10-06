@@ -2,13 +2,13 @@ import { inject, Injectable, signal } from '@angular/core';
 
 import { Place } from './place.model';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlacesService {
-  private userPlaces = signal<Place[]>([]);
+  userPlaces = signal<Place[]>([]);
   private httpClient = inject(HttpClient);
 
   loadedUserPlaces = this.userPlaces.asReadonly();
@@ -24,10 +24,33 @@ export class PlacesService {
     return this.fetchData(
       'http://localhost:3000/user-places',
       'Something went wrong. Please try again later.'
+    ).pipe(
+      tap({
+        next: (userPlaces) => this.userPlaces.set(userPlaces.places),
+      })
     );
   }
 
-  addPlaceToUserPlaces(place: Place) {}
+  addPlaceToUserPlaces(selectedPlace: Place) {
+    this.userPlaces.update((prev) => {
+      const isExist = prev.some((p) => p.id === selectedPlace.id);
+      if (!isExist) {
+        return [...prev, selectedPlace];
+      }
+      const isFavorite = prev.find(
+        (p) => p.id === selectedPlace.id
+      )?.isFavorite;
+      if (!isFavorite) {
+        return prev.filter((p) => p.id !== selectedPlace.id);
+      }
+
+      return prev;
+    });
+
+    return this.httpClient
+      .put('http://localhost:3000/user-places', { selectedPlace })
+      .subscribe();
+  }
 
   removeUserPlace(place: Place) {}
 

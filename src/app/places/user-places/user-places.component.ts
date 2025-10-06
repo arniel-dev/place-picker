@@ -14,19 +14,16 @@ import { PlacesService } from '../places.service';
   imports: [PlacesContainerComponent, PlacesComponent, LoadingScreenComponent],
 })
 export class UserPlacesComponent implements OnInit {
-  places = signal<Place[] | undefined>(undefined);
+  private destroyRef = inject(DestroyRef);
+  private placeService = inject(PlacesService);
   isLoading = signal(false);
   error = signal('');
 
-  private destroyRef = inject(DestroyRef);
-  private placeService = inject(PlacesService);
+  places = this.placeService.loadedUserPlaces;
 
   ngOnInit(): void {
     this.isLoading.set(true);
     const subscription = this.placeService.loadUserPlaces().subscribe({
-      next: (resData) => {
-        this.places.set(resData.places);
-      },
       error: (errMsg: string) => {
         this.error.set(errMsg);
         this.isLoading.set(false);

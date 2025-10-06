@@ -15,7 +15,6 @@ export class PlacesComponent {
   selectPlace = output<Place>();
 
   toggleFavorite(place: Place) {
-    console.log(place);
     place.isFavorite = !place.isFavorite;
     this.selectPlace.emit(place);
   }
