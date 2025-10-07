@@ -32,19 +32,14 @@ export class PlacesService {
   }
 
   addPlaceToUserPlaces(selectedPlace: Place) {
+    console.log(selectedPlace);
     this.userPlaces.update((prev) => {
-      const isExist = prev.some((p) => p.id === selectedPlace.id);
-      if (!isExist) {
-        return [...prev, selectedPlace];
-      }
-      const isFavorite = prev.find(
-        (p) => p.id === selectedPlace.id
-      )?.isFavorite;
-      if (!isFavorite) {
+      const exists = prev.some((p) => p.id === selectedPlace.id);
+      if (exists) {
         return prev.filter((p) => p.id !== selectedPlace.id);
+      } else {
+        return [...prev, { ...selectedPlace, isFavorite: true }];
       }
-
-      return prev;
     });
 
     return this.httpClient
