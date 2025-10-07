@@ -4,7 +4,7 @@
   } @if (error() && !isLoading()) {
   <p class="fallback-text">{{ error() }}</p>
   } @if (places()) {
-  <app-places [places]="places()!" />
+  <app-places [places]="places()!" [displayHeartButton]="displayFave" />
   } @else if (places().length === 0) {
   <p class="fallback-text">Unfortunately, no favorite places has been added.</p>
   }

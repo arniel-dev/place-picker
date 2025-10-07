@@ -13,6 +13,7 @@ import { NgClass } from '@angular/common';
 export class PlacesComponent {
   places = input.required<Place[]>();
   selectPlace = output<Place>();
+  displayHeartButton = input<boolean>(true);
 
   toggleFavorite(place: Place) {
     place.isFavorite = !place.isFavorite;

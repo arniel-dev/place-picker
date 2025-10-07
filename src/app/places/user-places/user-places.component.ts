@@ -16,10 +16,12 @@ import { PlacesService } from '../places.service';
 export class UserPlacesComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private placeService = inject(PlacesService);
-  isLoading = signal(false);
+  // isLoading = signal(false);
+  isLoading = this.placeService.isLoading;
   error = signal('');
 
   places = this.placeService.loadedUserPlaces;
+  displayFave = false;
 
   ngOnInit(): void {
     this.isLoading.set(true);

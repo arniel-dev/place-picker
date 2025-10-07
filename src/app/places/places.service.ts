@@ -10,7 +10,7 @@ import { Observable, tap } from 'rxjs';
 export class PlacesService {
   userPlaces = signal<Place[]>([]);
   private httpClient = inject(HttpClient);
-
+  isLoading = signal(false);
   loadedUserPlaces = this.userPlaces.asReadonly();
 
   loadAvailablePlaces() {
@@ -32,7 +32,8 @@ export class PlacesService {
   }
 
   addPlaceToUserPlaces(selectedPlace: Place) {
-    console.log(selectedPlace);
+    const prevState = this.userPlaces();
+    this.isLoading.set(true);
     this.userPlaces.update((prev) => {
       const exists = prev.some((p) => p.id === selectedPlace.id);
       if (exists) {
@@ -44,7 +45,15 @@ export class PlacesService {
 
     return this.httpClient
       .put('http://localhost:3000/user-places', { selectedPlace })
-      .subscribe();
+      .subscribe({
+        error: () => {
+          this.userPlaces.set(prevState);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        },
+      });
   }
 
   removeUserPlace(place: Place) {}

@@ -6,7 +6,7 @@
         [src]="'http://localhost:3000/' + place.image.src"
         [alt]="place.image.alt"
       />
-
+      @if(displayHeartButton()){
       <button
         type="button"
         class="favorite-btn"
@@ -27,6 +27,7 @@
           />
         </svg>
       </button>
+      }
     </div>
     <h3>{{ place.title }}</h3>
   </li>
