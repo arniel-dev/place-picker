@@ -33,25 +33,22 @@ export class PlacesService {
 
   addPlaceToUserPlaces(selectedPlace: Place) {
     const prevState = this.userPlaces();
-    this.isLoading.set(true);
-    this.userPlaces.update((prev) => {
-      const exists = prev.some((p) => p.id === selectedPlace.id);
-      if (exists) {
-        return prev.filter((p) => p.id !== selectedPlace.id);
-      } else {
-        return [...prev, { ...selectedPlace, isFavorite: true }];
-      }
-    });
 
     return this.httpClient
       .put('http://localhost:3000/user-places', { selectedPlace })
       .subscribe({
         error: () => {
           this.userPlaces.set(prevState);
-          this.isLoading.set(false);
         },
         complete: () => {
-          this.isLoading.set(false);
+          this.userPlaces.update((prev) => {
+            const exists = prev.some((p) => p.id === selectedPlace.id);
+            if (exists) {
+              return prev.filter((p) => p.id !== selectedPlace.id);
+            } else {
+              return [...prev, { ...selectedPlace, isFavorite: true }];
+            }
+          });
         },
       });
   }
