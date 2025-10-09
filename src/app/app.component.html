@@ -6,7 +6,9 @@
     have visited.
   </p>
 </header>
-
+@if(error()){
+<app-error-modal title="An error accurred!" [message]="error()" />
+}
 <main>
   <app-available-places />
 
